@@ -31,8 +31,8 @@ run: .require-command
 		   bash -c "`cat ${ROOT}/${command}`"
 
 notebook: .require-port
-	docker run -d --rm ${DOCKER_PARAMETERS} -e HOME=/tmp -p $(port):8888 $(IMAGE) \
-		   bash -c "jupyter lab --ip=0.0.0.0 --no-browser --NotebookApp.token=''"
+	docker run -d --rm ${DOCKER_PARAMETERS} -e HOME=/tmp -p $(port):8888 --expose 8888 $(IMAGE) \
+		   bash -c "jupyter lab --ip=0.0.0.0 --no-browser --allow-root --NotebookApp.token=''"
 
 test:
 	docker run -it --rm ${DOCKER_PARAMETERS} ${IMAGE} python -m unittest
