@@ -34,17 +34,17 @@ def build():
     logging.info('M4 Dataset')
     M4Dataset.download()
 
-    logging.info('\n\nM3 Dataset')
-    M3Dataset.download()
+    # logging.info('\n\nM3 Dataset')
+    # M3Dataset.download()
 
-    logging.info('\n\nTourism Dataset')
-    TourismDataset.download()
+    # logging.info('\n\nTourism Dataset')
+    # TourismDataset.download()
 
-    logging.info('\n\nElectricity Dataset')
-    ElectricityDataset.download()
+    # logging.info('\n\nElectricity Dataset')
+    # ElectricityDataset.download()
 
-    logging.info('\n\nTraffic Dataset')
-    TrafficDataset.download()
+    # logging.info('\n\nTraffic Dataset')
+    # TrafficDataset.download()
 
 if __name__ == '__main__':
     logging.root.setLevel(logging.INFO)

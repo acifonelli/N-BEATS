@@ -29,7 +29,8 @@ from tqdm import tqdm
 from common.http_utils import download, url_file_name
 from common.settings import DATASETS_PATH
 
-FREQUENCIES = ['Hourly', 'Daily', 'Weekly', 'Monthly', 'Quarterly', 'Yearly']
+# FREQUENCIES = ['Hourly', 'Daily', 'Weekly', 'Monthly', 'Quarterly', 'Yearly']
+FREQUENCIES = ['Hourly']
 URL_TEMPLATE = 'https://github.com/Mcompetitions/M4-methods/raw/master/Dataset/{}/{}-{}.csv'
 
 TRAINING_DATASET_URLS = [URL_TEMPLATE.format("Train", freq, "train") for freq in FREQUENCIES]
@@ -65,6 +66,7 @@ class M4Dataset:
         :param training: Load training part if training is True, test part otherwise.
         """
         m4_info = pd.read_csv(INFO_FILE_PATH)
+        m4_info = m4_info.loc[m4_info.SP.isin(FREQUENCIES)]
         return M4Dataset(ids=m4_info.M4id.values,
                          groups=m4_info.SP.values,
                          frequencies=m4_info.Frequency.values,
@@ -83,7 +85,8 @@ class M4Dataset:
             return
 
         download(INFO_URL, INFO_FILE_PATH)
-        m4_ids = pd.read_csv(INFO_FILE_PATH).M4id.values
+        m4_info = pd.read_csv(INFO_FILE_PATH)
+        m4_ids = m4_info.loc[m4_info.SP.isin(FREQUENCIES)].M4id.values
 
         def build_cache(files: str, cache_path: str) -> None:
             timeseries_dict = OrderedDict(list(zip(m4_ids, [[]] * len(m4_ids))))
@@ -111,23 +114,32 @@ class M4Dataset:
 
 @dataclass()
 class M4Meta:
-    seasonal_patterns = ['Yearly', 'Quarterly', 'Monthly', 'Weekly', 'Daily', 'Hourly']
-    horizons = [6, 8, 18, 13, 14, 48]
-    frequencies = [1, 4, 12, 1, 1, 24]
+    # seasonal_patterns = ['Yearly', 'Quarterly', 'Monthly', 'Weekly', 'Daily', 'Hourly']
+    seasonal_patterns = ['Hourly']
+    # horizons = [6, 8, 18, 13, 14, 48]
+    horizons = [48]
+    # frequencies = [1, 4, 12, 1, 1, 24]
+    frequencies = [24]
+    # horizons_map = {
+    #     'Yearly': 6,
+    #     'Quarterly': 8,
+    #     'Monthly': 18,
+    #     'Weekly': 13,
+    #     'Daily': 14,
+    #     'Hourly': 48
+    # }
     horizons_map = {
-        'Yearly': 6,
-        'Quarterly': 8,
-        'Monthly': 18,
-        'Weekly': 13,
-        'Daily': 14,
         'Hourly': 48
     }
+    # frequency_map = {
+    #     'Yearly': 1,
+    #     'Quarterly': 4,
+    #     'Monthly': 12,
+    #     'Weekly': 1,
+    #     'Daily': 1,
+    #     'Hourly': 24
+    # }
     frequency_map = {
-        'Yearly': 1,
-        'Quarterly': 4,
-        'Monthly': 12,
-        'Weekly': 1,
-        'Daily': 1,
         'Hourly': 24
     }
 
@@ -137,4 +149,7 @@ def load_m4_info() -> pd.DataFrame:
 
     :return: Pandas DataFrame of M4Info.
     """
-    return pd.read_csv(INFO_FILE_PATH)
+
+    m4_info = pd.read_csv(INFO_FILE_PATH)
+    m4_info = m4_info.loc[m4_info.SP.isin(FREQUENCIES)]
+    return m4_info
